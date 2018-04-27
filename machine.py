@@ -49,7 +49,7 @@ class Maschine(Frame):
 
     def fill_products(self):
         """Wypełnienie listy produktów"""
-        pr = ["jajka", "kiełba", "chuj"]
+        pr = ["coca cola", "pepsi", "fanta"]
         lista = ""
         count =1
         for i in pr:
