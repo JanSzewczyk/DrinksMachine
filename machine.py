@@ -1,10 +1,13 @@
 from tkinter import *
-import time
+from throwing_coins import *
+
 
 class Maschine(Frame):
     def __init__(self, master):
         """Inicjalizacja okno"""
         self.text = ""
+        self.sum_coins = 0.0
+        self.monety_wrzucane = []
         super(Maschine, self).__init__(master)
         self.grid()
         self.create_widgets()
@@ -17,12 +20,12 @@ class Maschine(Frame):
         self.fill_products()
 
         # Wrzuć monetę
-        self.key1 = Button(self, text="Wrzuć monety")                                       # , command=self.reveal
-        self.key1.grid(row=3, column=2, columnspan=3, sticky=W)
+        self.key1 = Button(self, text="Wrzuć monete", command=self.thow_coins)
+        self.key1.grid(row=2, column=2, columnspan=3, sticky=W)
 
         # Wyświetlacz
-        self.screen = Text(self, width=13, height=5, wrap=WORD)
-        self.screen.grid(row=6, column=3, columnspan=3, rowspan=4, sticky=W)
+        self.screen = Text(self, width=13, height=9, wrap=WORD)
+        self.screen.grid(row=4, column=3, columnspan=6, rowspan=4, sticky=W)
 
         # Keypad
         self.key1 = Button(self, text="  1  ", command=lambda: self.keys_operation(1))
@@ -52,13 +55,13 @@ class Maschine(Frame):
         self.key9 = Button(self, text="  9  ", command=lambda: self.keys_operation(9))
         self.key9.grid(row=12, column=5, sticky=W)
 
-        self.key_del = Button(self, text="del ", command=lambda: self.keys_operation('del'))
+        self.key_del = Button(self, text="del ", command=lambda: self.keys_operation(10))
         self.key_del.grid(row=13, column=3, sticky=W)
 
         self.key0 = Button(self, text="  0  ", command=lambda: self.keys_operation(0))
         self.key0.grid(row=13, column=4, sticky=W)
 
-        self.key_ok = Button(self, text=" OK", command=lambda: self.keys_operation('ok'))
+        self.key_ok = Button(self, text=" OK", command=lambda: self.keys_operation(11))
         self.key_ok.grid(row=13, column=5, sticky=W)
 
         # Zwróć monety
@@ -76,20 +79,32 @@ class Maschine(Frame):
 
         self.products.insert(0.0, lista)
 
+    def thow_coins(self):
+        """Mechanizm wrzucania monet"""
+        pocket = Tk()
+        pocket.title("Portfel")
+        pocket.geometry("300x200")
+        pckt = Throwing_coins(pocket)
+        pocket.mainloop()
+        #wrzucanie pojedynczych monet , wrzucasz okno się zamyka suma ośnie i poiwtórz :)
+
     def keys_operation(self, key):
         """Operacje na przyciskach 0,1,2,..."""
-        if key == 'del':
+        if key == 10:
             self.text = ""
-        elif key == 'ok':
+            self.screen.delete(0.0, END)
+            self.screen.insert(0.0, self.text)
+        elif (key == 11) and not(self.text == ""):
             change = int(self.text)
-            if (change >=30) and (change <= 50):
-                print("elo")
+            if (change >= 30) and (change <= 50):
+                #upowanie napoi
+                pass
             else:
+                self.text = "Nie ma takiego napoju !!"
+                self.screen.delete(0.0, END)
                 self.screen.insert(0.0, self.text)
-                time.sleep(3)
-
-        else:
+                self.text = ""
+        elif (0 <= key) and (key <= 9):
             self.text += str(key)
-
-        self.screen.delete(0.0, END)
-        self.screen.insert(0.0, self.text)
+            self.screen.delete(0.0, END)
+            self.screen.insert(0.0, self.text)
