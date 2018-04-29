@@ -6,19 +6,21 @@ import time
 class Maschine(Frame):
     def __init__(self, master):
         """Inicjalizacja okno"""
-        self.sum_coins = 0.0
-        self.text = ""
-        self.monety_wrzucane = []
+        self.drinks = []                            #lista obiektów napoi
+        self.sum_coins = 0.0                        #suma wrzuconych monet
+        self.text = ""                              #tekst na screenie
+        self.monety_wrzucane = []                   #lista wrzuconych monet
         super(Maschine, self).__init__(master)
         self.grid()
+        self.inicjalize_drinks()
         self.create_widgets()
 
     def create_widgets(self):
         """Tworzy widgety naszej maszyny"""
         # Lista produktów
-        self.products = Text(self, width=25, height=30, wrap=WORD)
+        self.products = Text(self, width=25, height=22, font=("Courier",13,"bold"), wrap=WORD)
         self.products.grid(row=0, column=0, columnspan=2, rowspan=35, sticky=W)
-        self.fill_products()
+        self.write_products()
 
         # Wrzuć monetę
         self.key1 = Button(self, text="Wrzuć monete", command=self.throw_coins)
@@ -70,18 +72,25 @@ class Maschine(Frame):
         self.key_oddaj = Button(self, text="Oddaj monety")                                       # , command=self.reveal
         self.key_oddaj.grid(row=20, column=2, columnspan=3, sticky=W)
 
-    def fill_products(self):
+    def inicjalize_drinks(self):
+        """Tworzenie napoi"""
+        nazwy = ["Coca-Cola", "Coca-Cola Light", "Coca-Cola Zero", "Pepsi", "Pepsi Light", "Pepsi Wild Cherry", "Sprite",
+                 "Fanta", "7 Up", "Mirinda", "Mountain Dew", "Lipton", "Nestea", "Monster",
+                 "Tiger", "Black", "RedBull", "OSHEE", "Kropla Beskidu", "Żywiec Zdrój", "Muszynianka"]
+        cena = [2.5, 2.8, 2.65, 3.0, 3.2, 2.9, 3.5,
+                3.0, 2.7, 3.25, 3.5, 2.0, 2.35, 5.5,
+                3.0, 2.5, 7.5, 3.5, 1.5, 1.6, 1.29]
+
+        self.drinks = [Product(name=nazwy[x], prize=cena[x]) for x in range(21)]
+        print(self.drinks)
+        for i in self.drinks:
+            print(i)
+
+    def write_products(self):
         """Wypełnienie listy produktów"""
-        pr1 = Product("Pepsi", 5.0)
-        pr2 = Product("Coca-cola", 3.5)
-        print(pr1)
-        print(pr2)
-        pr = ["coca cola", "pepsi", "fanta"]
         lista = ""
-        count =1
-        for i in pr:
-            lista += str(count) + ". " + i + "\n"
-            count += 1
+        for i in self.drinks:
+            lista += str(i) + "\n"
 
         self.products.insert(0.0, lista)
 
@@ -103,10 +112,12 @@ class Maschine(Frame):
 
     def keys_operation(self, key):
         """Operacje na przyciskach 0,1,2,..."""
+        #usunięcie numerka
         if key == 10:
             self.text = ""
             self.screen.delete(0.0, END)
             self.screen.insert(0.0, "Kwota :" + str(self.sum_coins) + "\nNumer :" + self.text)
+        #akceptowanie produktu
         elif (key == 11) and not(self.text == ""):
             change = int(self.text)
             if (change >= 30) and (change <= 50):
@@ -116,8 +127,7 @@ class Maschine(Frame):
                 self.screen.delete(0.0, END)
                 self.screen.insert(0.0, "Brak produktu !!\nWybierz ponownie ")
                 self.text = ""
-
-
+        #dodawanie cyfr
         elif (0 <= key) and (key <= 9):
             self.text += str(key)
             self.screen.delete(0.0, END)

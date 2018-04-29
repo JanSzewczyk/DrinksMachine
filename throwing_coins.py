@@ -51,7 +51,7 @@ class Throwing_coins(Frame):
         self.wroc.grid(row=3, column=0, columnspan=3, sticky=W)
 
     def wrzuc(self, coin, X):
-        """Ustal wartość pieniążka"""
+        """Ustal wartość pieniążka, zamyka okno"""
         self.__coins = coin
         X.quit()
         X.destroy()

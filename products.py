@@ -1,4 +1,4 @@
-class Product(object):
+class Product:
     count = 30
     def __init__(self, name = "", prize = 0.0):
         """Inicjalizuj"""
@@ -10,7 +10,7 @@ class Product(object):
 
     def __str__(self):
         text = ""
-        text += str(self.nr_produktu) + ". " + self.nazwa + " cena: " + str(self.cena)
+        text += str(self.nr_produktu) + "." + self.nazwa + " :" + str(self.cena)
         return text
 
     @staticmethod
