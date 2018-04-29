@@ -1,5 +1,6 @@
 from tkinter import *
 from throwing_coins import *
+from products import *
 import time
 
 class Maschine(Frame):
@@ -20,7 +21,7 @@ class Maschine(Frame):
         self.fill_products()
 
         # Wrzuć monetę
-        self.key1 = Button(self, text="Wrzuć monete", command=self.thow_coins)
+        self.key1 = Button(self, text="Wrzuć monete", command=self.throw_coins)
         self.key1.grid(row=2, column=2, columnspan=3, sticky=W)
 
         # Wyświetlacz
@@ -71,6 +72,10 @@ class Maschine(Frame):
 
     def fill_products(self):
         """Wypełnienie listy produktów"""
+        pr1 = Product("Pepsi", 5.0)
+        pr2 = Product("Coca-cola", 3.5)
+        print(pr1)
+        print(pr2)
         pr = ["coca cola", "pepsi", "fanta"]
         lista = ""
         count =1
@@ -80,15 +85,21 @@ class Maschine(Frame):
 
         self.products.insert(0.0, lista)
 
-    def thow_coins(self):
+    def throw_coins(self):
         """Mechanizm wrzucania monet"""
         pocket = Tk()
         pocket.title("Portfel")
         pckt = Throwing_coins(pocket)
         pocket.mainloop()
 
-        print("W automacie :" + str(pckt.coins))
-        #wrzucanie pojedynczych monet , wrzucasz okno się zamyka suma ośnie i poiwtórz :)
+        moneta = pckt.get_coin()
+        if moneta != 0.0:
+            self.sum_coins += moneta
+            self.sum_coins = round(self.sum_coins, 2)
+            self.monety_wrzucane.append(moneta)
+            print(self.monety_wrzucane)
+            self.screen.delete(0.0, END)
+            self.screen.insert(0.0, "Kwota :" + str(self.sum_coins) + "\nNumer :" + self.text)
 
     def keys_operation(self, key):
         """Operacje na przyciskach 0,1,2,..."""
