@@ -1,6 +1,7 @@
 from tkinter import *
 from throwing_coins import *
 from products import *
+from give_back_coins import *
 import time
 
 class Maschine(Frame):
@@ -69,7 +70,7 @@ class Maschine(Frame):
         self.key_ok.grid(row=13, column=5, sticky=W)
 
         # Zwróć monety
-        self.key_oddaj = Button(self, text="Oddaj monety")                                       # , command=self.reveal
+        self.key_oddaj = Button(self, text="Oddaj monety", command=lambda: self.g_b_coins())
         self.key_oddaj.grid(row=20, column=2, columnspan=3, sticky=W)
 
     def inicjalize_drinks(self):
@@ -82,9 +83,6 @@ class Maschine(Frame):
                 3.0, 2.5, 7.5, 3.5, 1.5, 1.6, 1.29]
 
         self.drinks = [Product(name=nazwy[x], prize=cena[x]) for x in range(21)]
-        print(self.drinks)
-        for i in self.drinks:
-            print(i)
 
     def write_products(self):
         """Wypełnienie listy produktów"""
@@ -109,6 +107,13 @@ class Maschine(Frame):
             print(self.monety_wrzucane)
             self.screen.delete(0.0, END)
             self.screen.insert(0.0, "Kwota :" + str(self.sum_coins) + "\nNumer :" + self.text)
+
+    def g_b_coins(self):
+        """mechanizm wyrzucania monet"""
+        mach = Tk()
+        mach.title("Pieniądze zwrócone XD")
+        gbc = Give_Back_coins(mach)
+        mach.mainloop()
 
     def keys_operation(self, key):
         """Operacje na przyciskach 0,1,2,..."""
