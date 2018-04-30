@@ -11,6 +11,8 @@ class Maschine(Frame):
         self.sum_coins = 0.0                        #suma wrzuconych monet
         self.text = ""                              #tekst na screenie
         self.monety_wrzucane = []                   #lista wrzuconych monet
+        self.reszta = 0.0                           #reszta
+        self.monety_reszta = []
         super(Maschine, self).__init__(master)
         self.grid()
         self.inicjalize_drinks()
@@ -73,6 +75,15 @@ class Maschine(Frame):
         self.key_oddaj = Button(self, text="Oddaj monety", command=lambda: self.g_b_coins())
         self.key_oddaj.grid(row=20, column=2, columnspan=3, sticky=W)
 
+        # Weź resztę
+        self.key_reszta = Button(self, text="Weź resztę")
+        self.key_reszta.grid(row=23, column=2, columnspan=3, sticky=W)
+
+        #odbierz produkt
+        self.wez = Button(self, text="               Weź              ", font=("Courier", 15, "bold"),
+                           background="red")
+        self.wez.grid(row=37, column=0, columnspan=7, sticky=W)
+
     def inicjalize_drinks(self):
         """Tworzenie napoi"""
         nazwy = ["Coca-Cola", "Coca-Cola Light", "Coca-Cola Zero", "Pepsi", "Pepsi Light", "Pepsi Wild Cherry", "Sprite",
@@ -110,10 +121,18 @@ class Maschine(Frame):
 
     def g_b_coins(self):
         """mechanizm wyrzucania monet"""
+        self.monety_reszta = self.monety_wrzucane
+        self.monety_wrzucane = []
+        self.sum_coins = 0.0
+        self.text = ""
+        self.screen.delete(0.0, END)
+        self.screen.insert(0.0, "Kwota :" + str(self.sum_coins) + "\nNumer :" + self.text)
+
         mach = Tk()
-        mach.title("Pieniądze zwrócone XD")
-        gbc = Give_Back_coins(mach)
+        mach.title("Zwrot pieniędzy !!")
+        gbc = Give_Back_coins(mach, self.monety_reszta)
         mach.mainloop()
+        self.monety_reszta =[]
 
     def keys_operation(self, key):
         """Operacje na przyciskach 0,1,2,..."""
@@ -126,8 +145,26 @@ class Maschine(Frame):
         elif (key == 11) and not(self.text == ""):
             change = int(self.text)
             if (change >= 30) and (change <= 50):
-                #kupowanie napoi
-                pass
+                for i in self.drinks:
+                    if change == i.get_nr():
+                        obj = i
+
+                #porównanie ceny i monet w automacie
+                if self.sum_coins > obj.get_cena():
+                    self.reszta = self.sum_coins - obj.get_cena()
+                    print("Reszta :", self.reszta)
+                    #funkja reszty !!!!!!!!! zzrobić klasę monet
+
+                elif self.sum_coins == obj.get_cena():
+                    self.reszta = 0.0
+                    self.sum_coins = 0.0
+                    self.text = ""
+                    self.screen.delete(0.0, END)
+                    self.screen.insert(0.0, "Kwota :" + str(self.sum_coins) + "\nNumer :" + self.text)
+                else:
+                    self.screen.delete(0.0, END)
+                    self.screen.insert(0.0, "Za mało pieniędzy !!\nWybierz ponownie ")
+                    self.text = ""
             else:
                 self.screen.delete(0.0, END)
                 self.screen.insert(0.0, "Brak produktu !!\nWybierz ponownie ")
@@ -137,3 +174,4 @@ class Maschine(Frame):
             self.text += str(key)
             self.screen.delete(0.0, END)
             self.screen.insert(0.0, "Kwota :" + str(self.sum_coins) + "\nNumer :" + self.text)
+

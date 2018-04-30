@@ -16,3 +16,11 @@ class Product:
     @staticmethod
     def counting():
         Product.count += 1
+
+    def get_nr(self):
+        """Zwraca numer produktu"""
+        return self.__nr_produktu
+
+    def get_cena(self):
+        """Zwraca cenę produktu"""
+        return self.__cena
