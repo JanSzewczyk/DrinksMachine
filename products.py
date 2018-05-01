@@ -24,3 +24,11 @@ class Product:
     def get_cena(self):
         """Zwraca cenę produktu"""
         return self.__cena
+
+    def get_ilosc(self):
+        """Zwraca ilosc produktu"""
+        return int(self.__ilosc)
+
+    def dec(self):
+        """Zwieksza ilość"""
+        self.__ilosc -= 1
