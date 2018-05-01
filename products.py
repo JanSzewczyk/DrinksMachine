@@ -25,6 +25,10 @@ class Product:
         """Zwraca cenę produktu"""
         return self.__cena
 
+    def get_nazwa(self):
+        """Zwraca nazwę produktu"""
+        return self.__nazwa
+
     def get_ilosc(self):
         """Zwraca ilosc produktu"""
         return int(self.__ilosc)

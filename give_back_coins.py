@@ -1,10 +1,10 @@
 from tkinter import *
 
-class Give_Back_coins(Frame):
+class Give_Back(Frame):
     def __init__(self, master, bc):
         """Inicjalizacja okno"""
         self.coins = bc
-        super(Give_Back_coins, self).__init__(master)
+        super(Give_Back, self).__init__(master)
         self.create_widgets(master)
         self.grid()
 

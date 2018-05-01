@@ -16,6 +16,7 @@ class Maschine(Frame):
         self.monety_w_automacie = []                #lista obiektow monet
         self.suma_w_automacie = 0.0                 #suma monet znajdujących się w automacie
         self.reszta_coin = []                       #lista monet ktore zraca
+        self.kupione_produkty = []
 
         super(Maschine, self).__init__(master)
         self.grid()
@@ -81,7 +82,7 @@ class Maschine(Frame):
         self.key_oddaj.grid(row=20, column=2, columnspan=3, sticky=W)
 
         # Weź resztę
-        self.key_reszta = Button(self, text="Weź resztę")
+        self.key_reszta = Button(self, text="Weź resztę", command=lambda: self.take_coins())
         self.key_reszta.grid(row=23, column=2, columnspan=3, sticky=W)
 
         #odbierz produkt
@@ -139,12 +140,9 @@ class Maschine(Frame):
         self.text = ""
         self.screen.delete(0.0, END)
         self.screen.insert(0.0, "Kwota :" + str(self.sum_coins) + "\nNumer :" + self.text)
-
-        mach = Tk()
-        mach.title("Zwrot pieniędzy !!")
-        gbc = Give_Back_coins(mach, self.monety_reszta)
-        mach.mainloop()
-        self.monety_reszta =[]
+        #test
+        print("Monety zwrócone :", self.monety_reszta)
+        print("Monety wrzucone :", self.monety_wrzucane)
 
     def keys_operation(self, key):
         """Operacje na przyciskach 0,1,2,..."""
@@ -162,7 +160,12 @@ class Maschine(Frame):
                         obj = i
 
                 #porównanie ceny i monet w automacie
-                if self.sum_coins > obj.get_cena():
+                if obj.get_ilosc() == 0:
+                    self.screen.delete(0.0, END)
+                    self.screen.insert(0.0, "Brak towaru !!\nWybierz ponownie ")
+                    self.text = ""
+
+                elif self.sum_coins > obj.get_cena():
                     self.reszta = self.sum_coins - obj.get_cena()
                     print("Reszta :", self.reszta)
                     self.rest(obj)
@@ -170,16 +173,27 @@ class Maschine(Frame):
                 elif self.sum_coins == obj.get_cena():
                     self.reszta = 0.0
                     self.sum_coins = 0.0
+
+                    # dodawanie wrzuconych monet do monet w maszynie
+                    for j in self.monety_wrzucane:
+                        for k in self.monety_w_automacie:
+                            if j == k.get_nominal():
+                                k.inc()
+
+                    self.kupione_produkty.append(obj.get_nazwa())
+                    obj.dec()
+                    print(self.kupione_produkty)
+                    self.monety_wrzucane = []
                     self.text = ""
                     self.screen.delete(0.0, END)
-                    self.screen.insert(0.0, "Kwota :" + str(self.sum_coins) + "\nNumer :" + self.text)
+                    self.screen.insert(0.0, "Kwota :" + str(self.sum_coins) + "\nNumer :" + self.text + "\nWeź produkt ")
                 else:
                     self.screen.delete(0.0, END)
                     self.screen.insert(0.0, "Za mało pieniędzy !!\nWybierz ponownie ")
                     self.text = ""
             else:
                 self.screen.delete(0.0, END)
-                self.screen.insert(0.0, "Brak produktu !!\nWybierz ponownie ")
+                self.screen.insert(0.0, "Nie właściwy numer !!\nWybierz ponownie ")
                 self.text = ""
         #dodawanie cyfr
         elif (0 <= key) and (key <= 9):
@@ -204,53 +218,66 @@ class Maschine(Frame):
         for obj in self.monety_w_automacie:
             print(obj)
 
-        if self.reszta > self.suma_w_automacie:
-            # za mało pieniędzy wkluczenie
-            # zwrot wszystkich pieniędzy
-            # wypissanie komunikatu "wrzuć odliczoną kwotę "
-            print("Za duża reszta :(")
-        elif self.reszta == 0.0:
-            # oddaprodukt doda
-            # dec produkt
-            print("Masz rodukt nie ma reszzty :*")
-        elif self.reszta < self.suma_w_automacie:
+        if self.reszta < self.suma_w_automacie:
             # obliczanie reszty
             for l in self.monety_w_automacie:
                 logic = True
                 while logic:
                     if (round(self.reszta, 2) - l.get_nominal() >= 0) and (l.get_ilosc() > 0):
                         self.reszta_coin.append(l.get_nominal())
-                        print("reszta1 :", self.reszta)
-                        print("nominał :", l.get_nominal())
                         self.reszta -= l.get_nominal()
                         self.reszta = round(self.reszta, 2)
-                        print("reszta2 :",self.reszta, "\n")
                         l.dec()
                     else:
                         logic = False
                 if self.reszta == 0.0:
                     break
 
-            for obj in self.monety_w_automacie:
-                print(obj)
-
             if (self.reszta == 0.0) and (drink.get_ilosc() > 0):
-                monety_wrzucone = []
-                # oddanie picia
+                self.monety_wrzucone = []
+                print(drink.get_nazwa())
+                print(drink.get_ilosc())
+                self.kupione_produkty.append(drink.get_nazwa())
+                drink.dec()
+                self.sum_coins = 0.0
+                self.text = ""
+                self.screen.delete(0.0, END)
+                self.screen.insert(0.0, "Kwota :" + str(self.sum_coins) + "\nNumer :" + self.text + "\nWeź produkt ")
             else:
-                # warunek spełniający nie jest spełniny i zwraca wszystkie monety
-                lista = self.monety_wrzucane
+                lista = [x for x in self.monety_wrzucane]
+
                 for i in self.reszta_coin:
                     lista.remove(i)
-                    self.reszta_coin = []
-                print("\nlista :", lista)
+
                 for j in lista:
                     for k in self.monety_w_automacie:
                         if j == k.get_nominal():
                             k.dec()
+
+                print("reszta :", self.reszta_coin)
+                print("\nlista :", lista)
+                self.reszta_coin = self.monety_wrzucane
+                self.monety_wrzucane = []
                 lista = []
+                self.sum_coins = 0.0
+                self.text = ""
+                self.screen.delete(0.0, END)
+                self.screen.insert(0.0, "Wrzuć odliczoną kwotę!! \nWybierz ponownie ")
 
         print("\n\n Monety oddane: ", self.reszta_coin, "\n\n")
         for obj in self.monety_w_automacie:
             print(obj)
+        print(self.kupione_produkty)
 
+    def take_coins(self):
+        mach = Tk()
+        mach.title("WEŹ RESZTĘ !!!")
+        gbc = Give_Back(mach, self.reszta_coin)
+        mach.mainloop()
+        self.reszta_coin = []
+        self.text = ""
+        self.screen.delete(0.0, END)
+        self.screen.insert(0.0, "Kwota :" + str(self.sum_coins) + "\nNumer :" + self.text)
+        #test
+        print("Monety zwrócone :", self.reszta_coin)
+        print("Monety wrzucone :", self.monety_wrzucane)
