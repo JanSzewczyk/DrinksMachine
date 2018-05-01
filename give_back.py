@@ -1,8 +1,9 @@
 from tkinter import *
 
 class Give_Back(Frame):
-    def __init__(self, master, bc):
+    def __init__(self, master, bc, text):
         """Inicjalizacja okno"""
+        self.typ = text
         self.coins = bc
         super(Give_Back, self).__init__(master)
         self.create_widgets(master)
@@ -17,11 +18,12 @@ class Give_Back(Frame):
 
         self.wroc = Button(self, text="           Weź          ", font=("Courier", 15, "bold"),
                            background="purple", command=lambda: self.back(X))
-        self.wroc.grid(row=20, column=0, columnspan=3, sticky=W)
+        self.wroc.grid(row=40, column=0, columnspan=3, sticky=W)
 
     def write_coins(self):
         """Wypełnienie listy produktów"""
-        lista = "Twoje monety :\n"
+        lista = ""
+        lista += self.typ + " :\n"
         for i in self.coins:
             lista += str(i) + "\n"
 
