@@ -244,35 +244,36 @@ class Maschine(Frame):
                 self.kupione_produkty.append(drink.get_nazwa())
                 drink.dec()
                 self.sum_coins = 0.0
+
+                # for obj in self.monety_w_automacie:
+                #    print(obj)
+                # print(self.kupione_produkty)
+
                 self.text = ""
                 self.screen.delete(0.0, END)
                 self.screen.insert(0.0, "Kwota :" + str(self.sum_coins) + "\nNumer :" + self.text + "\nWeź produkt ")
             else:
-                print("problem :", self.monety_wrzucane)
-                lista = [x for x in self.monety_wrzucane]
+                for j in self.reszta_coin:
+                    for k in self.monety_w_automacie:
+                        if j == k.get_nominal():
+                            k.inc()
 
-                for i in self.reszta_coin:
-                    lista.remove(i)
-
-                for j in lista:
+                for j in self.monety_wrzucane:
                     for k in self.monety_w_automacie:
                         if j == k.get_nominal():
                             k.dec()
 
                 print("reszta :", self.reszta_coin)
-                print("\nlista :", lista)
-                self.reszta_coin = self.monety_wrzucane
+                self.reszta_coin = [x for x in self.monety_wrzucane]
                 self.monety_wrzucane = []
-                lista = []
                 self.sum_coins = 0.0
                 self.text = ""
                 self.screen.delete(0.0, END)
                 self.screen.insert(0.0, "Wrzuć odliczoną kwotę!! \nWybierz ponownie ")
 
-        print("\n\n Monety oddane: ", self.reszta_coin, "\n\n")
-        for obj in self.monety_w_automacie:
-            print(obj)
-        print(self.kupione_produkty)
+        #for obj in self.monety_w_automacie:
+        #    print(obj)
+        #print(self.kupione_produkty)
 
     def take_coins(self):
         mach = Tk()
