@@ -130,9 +130,8 @@ class Maschine(Frame):
             self.sum_coins += moneta
             self.sum_coins = round(self.sum_coins, 2)
             self.monety_wrzucane.append(moneta)
-            print(self.monety_wrzucane)
-            self.screen.delete(0.0, END)
-            self.screen.insert(0.0, "Kwota :" + str(self.sum_coins) + "\nNumer :" + self.text)
+            #print(self.monety_wrzucane)
+            self.write("Kwota :" + str(self.sum_coins) + "\nNumer :" + self.text)
 
     def g_b_coins(self):
         """mechanizm wyrzucania monet"""
@@ -143,16 +142,15 @@ class Maschine(Frame):
         self.screen.delete(0.0, END)
         self.screen.insert(0.0, "Kwota :" + str(self.sum_coins) + "\nNumer :" + self.text)
         # test
-        print("Monety zwrócone :", self.monety_reszta)
-        print("Monety wrzucone :", self.monety_wrzucane)
+        #print("Monety zwrócone :", self.monety_reszta)
+        #print("Monety wrzucone :", self.monety_wrzucane)
 
     def keys_operation(self, key):
         """Operacje na przyciskach 0,1,2,..."""
         # usunięcie numerka
         if key == 10:
             self.text = ""
-            self.screen.delete(0.0, END)
-            self.screen.insert(0.0, "Kwota :" + str(self.sum_coins) + "\nNumer :" + self.text)
+            self.write("Kwota :" + str(self.sum_coins) + "\nNumer :" + self.text)
         # akceptowanie produktu
         elif (key == 11) and not (self.text == ""):
             change = int(self.text)
@@ -161,10 +159,9 @@ class Maschine(Frame):
                     if change == i.get_nr():
                         obj = i
 
-                # porównanie ceny i monet w automacie
+                # sprawdzenie deostępności towaru
                 if obj.get_ilosc() == 0:
-                    self.screen.delete(0.0, END)
-                    self.screen.insert(0.0, "Brak towaru !!\nWybierz ponownie ")
+                    self.write("Brak towaru !!\nWybierz ponownie ")
                     self.text = ""
 
                 elif self.sum_coins > obj.get_cena():
@@ -187,22 +184,17 @@ class Maschine(Frame):
                     print(self.kupione_produkty)
                     self.monety_wrzucane = []
                     self.text = ""
-                    self.screen.delete(0.0, END)
-                    self.screen.insert(0.0,
-                                       "Kwota :" + str(self.sum_coins) + "\nNumer :" + self.text + "\nWeź produkt ")
+                    self.write("Kwota :" + str(self.sum_coins) + "\nNumer :" + self.text + "\nWeź produkt ")
                 else:
-                    self.screen.delete(0.0, END)
-                    self.screen.insert(0.0, "Za mało pieniędzy !!\nWybierz ponownie ")
+                    self.write("Za mało pieniędzy !!\nWybierz ponownie ")
                     self.text = ""
             else:
-                self.screen.delete(0.0, END)
-                self.screen.insert(0.0, "Nie właściwy numer !!\nWybierz ponownie ")
+                self.write("Nie właściwy numer !!\nWybierz ponownie ")
                 self.text = ""
         # dodawanie cyfr
         elif (0 <= key) and (key <= 9):
             self.text += str(key)
-            self.screen.delete(0.0, END)
-            self.screen.insert(0.0, "Kwota :" + str(self.sum_coins) + "\nNumer :" + self.text)
+            self.write("Kwota :" + str(self.sum_coins) + "\nNumer :" + self.text)
 
     def rest(self, drink):
         """Oblicza resztę"""
@@ -250,8 +242,7 @@ class Maschine(Frame):
                 # print(self.kupione_produkty)
 
                 self.text = ""
-                self.screen.delete(0.0, END)
-                self.screen.insert(0.0, "Kwota :" + str(self.sum_coins) + "\nNumer :" + self.text + "\nWeź produkt ")
+                self.write("Kwota :" + str(self.sum_coins) + "\nNumer :" + self.text + "\nWeź produkt ")
             else:
                 for j in self.reszta_coin:
                     for k in self.monety_w_automacie:
@@ -268,29 +259,33 @@ class Maschine(Frame):
                 self.monety_wrzucane = []
                 self.sum_coins = 0.0
                 self.text = ""
-                self.screen.delete(0.0, END)
-                self.screen.insert(0.0, "Wrzuć odliczoną kwotę!! \nWybierz ponownie ")
+                self.write("Wrzuć odliczoną kwotę!! \nWybierz ponownie ")
 
         #for obj in self.monety_w_automacie:
         #    print(obj)
         #print(self.kupione_produkty)
 
     def take_coins(self):
+        """Odebranie reszty"""
         mach = Tk()
         mach.title("WEŹ RESZTĘ !!!")
         gbc = Give_Back(mach, self.reszta_coin, "Twoja reszta")
         mach.mainloop()
         self.reszta_coin = []
         self.text = ""
-        self.screen.delete(0.0, END)
-        self.screen.insert(0.0, "Kwota :" + str(self.sum_coins) + "\nNumer :" + self.text)
+        self.write("Kwota :" + str(self.sum_coins) + "\nNumer :" + self.text)
 
     def take_product(self):
+        """Odebranie produktu"""
         prod = Tk()
         prod.title("WEŹ NAPÓJ !!!")
         gbc = Give_Back(prod, self.kupione_produkty, "Twoje produkty ")
         prod.mainloop()
         self.kupione_produkty = []
         self.text = ""
-        # self.screen.delete(0.0, END)
-        # self.screen.insert(0.0, "Kwota :" + str(self.sum_coins) + "\nNumer :" + self.text)
+        self.write("Kwota :" + str(self.sum_coins) + "\nNumer :" + self.text)
+
+    def write(self, text):
+        """Wypisywanie komunikatów na screenie"""
+        self.screen.delete(0.0, END)
+        self.screen.insert(0.0, text)
