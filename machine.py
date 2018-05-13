@@ -16,7 +16,7 @@ class Maschine(Frame):
         self.reszta = 0.0  # reszta
         self.monety_w_automacie = []  # lista obiektow monet
         self.suma_w_automacie = 0.0  # suma monet znajdujących się w automacie
-        self.reszta_coin = []  # lista monet ktore zraca
+        self.monety_reszta = []  # lista monet ktore zraca
         self.kupione_produkty = []
 
         super(Maschine, self).__init__(master)
@@ -134,15 +134,16 @@ class Maschine(Frame):
             self.write("Kwota :" + str(self.sum_coins) + "\nNumer :" + self.text)
 
     def g_b_coins(self):
-        """mechanizm wyrzucania monet"""
-        self.monety_reszta = self.monety_wrzucane
+        """mechanizm wyrzucania monet""" #!!!!!!!!!!!!!!!!!!!!
+        self.monety_reszta = [x for x in self.monety_wrzucane]
+        print("zwrócone :", self.monety_reszta)
         self.monety_wrzucane = []
         self.sum_coins = 0.0
         self.text = ""
         self.screen.delete(0.0, END)
         self.screen.insert(0.0, "Kwota :" + str(self.sum_coins) + "\nNumer :" + self.text)
         # test
-        #print("Monety zwrócone :", self.monety_reszta)
+        print("zwrócone :", self.monety_reszta)
         #print("Monety wrzucone :", self.monety_wrzucane)
 
     def keys_operation(self, key):
@@ -220,7 +221,7 @@ class Maschine(Frame):
                 logic = True
                 while logic:
                     if (round(self.reszta, 2) - l.get_nominal() >= 0) and (l.get_ilosc() > 0):
-                        self.reszta_coin.append(l.get_nominal())
+                        self.monety_reszta.append(l.get_nominal())
                         self.reszta -= l.get_nominal()
                         self.reszta = round(self.reszta, 2)
                         l.dec()
@@ -244,7 +245,7 @@ class Maschine(Frame):
                 self.text = ""
                 self.write("Kwota :" + str(self.sum_coins) + "\nNumer :" + self.text + "\nWeź produkt ")
             else:
-                for j in self.reszta_coin:
+                for j in self.monety_reszta:
                     for k in self.monety_w_automacie:
                         if j == k.get_nominal():
                             k.inc()
@@ -254,8 +255,8 @@ class Maschine(Frame):
                         if j == k.get_nominal():
                             k.dec()
 
-                print("reszta :", self.reszta_coin)
-                self.reszta_coin = [x for x in self.monety_wrzucane]
+                print("reszta :", self.monety_reszta)
+                self.monety_reszta = [x for x in self.monety_wrzucane]
                 self.monety_wrzucane = []
                 self.sum_coins = 0.0
                 self.text = ""
@@ -267,11 +268,12 @@ class Maschine(Frame):
 
     def take_coins(self):
         """Odebranie reszty"""
+        print("reszta :", self.monety_reszta)
         mach = Tk()
         mach.title("WEŹ RESZTĘ !!!")
-        gbc = Give_Back(mach, self.reszta_coin, "Twoja reszta")
+        gbc = Give_Back(mach, self.monety_reszta, "Twoja reszta")
         mach.mainloop()
-        self.reszta_coin = []
+        self.monety_reszta = []
         self.text = ""
         self.write("Kwota :" + str(self.sum_coins) + "\nNumer :" + self.text)
 
